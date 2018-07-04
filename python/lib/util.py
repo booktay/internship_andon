@@ -12,7 +12,7 @@ import os
 import cv2 as cv
 
 try:
-   from config import IMG_STD_PATH, TRAIN_PATH, EXAMPLE_PATH
+   from config import IMG_STD_PATH, TRAIN_PATH, EXAMPLE_PATH, TRAIN_PATH_MAIN_YML
 except ImportError:
    pass
 
@@ -81,8 +81,8 @@ class Utility:
     def imgRPath(self):
         return IMG_STD_PATH
 
-    def trainPath(self, name="main.yml"):
-        return os.path.join(TRAIN_PATH, name)
+    def trainPath(self):
+        return TRAIN_PATH_MAIN_YML
 
     def HAARpath(self):
         return os.popen("find /usr -name haarcascade_frontalface_default.xml -print -quit").read().split('\n')[0]
