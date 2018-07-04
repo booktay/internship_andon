@@ -41,6 +41,5 @@ class DatabaseConnection:
             }
         })
 
-
 pp.pprint(DatabaseConnection().updateUser("test"))
 
