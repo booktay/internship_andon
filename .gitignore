@@ -102,3 +102,15 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Siwanont Sittinam
+# PYC File
+python/*.pyc
+python/lib/*.pyc
+python/__pycache__/
+python/lib/__pycache__/
+# General By
+example/
+temp/
+#Config file
+python/lib/config.py
