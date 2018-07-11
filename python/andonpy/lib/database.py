@@ -9,7 +9,7 @@
 import sys
 import os
 import pprint as pp
-from util import Utility
+from .util import Utility
 from pymongo import MongoClient
 
 try:
@@ -27,19 +27,20 @@ class DatabaseConnection:
 
     def getUser(self, username):
         user = self.user.find_one({'username':username})
-        if user :
-            return user
+        if user : return user
         return None
 
-    def updateUser(self, username):
-        user = self.user.updateOne({
-            {
-                'username': username
-            },{
-                '$set': {"password": "simple", "git": "https://github.com/simple/my_page"},
-                '$currentDate': {'lastModified': True}
-            }
-        })
+    def getallUser(self, fields):
+        projection = {
+            '$project': { fields : 1, "status" : 1 }
+        }
+        user = self.user.aggregate([projection])
+        if user : return user
+        return None
 
-pp.pprint(DatabaseConnection().updateUser("test"))
-
+    def updateStatusUser(self, username, state=True):
+        want_to_update = {
+            "status": state
+        }
+        res = self.user.update_one({'username': username}, {"$set": want_to_update})
+        return res.modified_count

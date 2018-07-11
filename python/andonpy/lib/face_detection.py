@@ -16,7 +16,7 @@ from time import sleep
 from picamera import PiCamera
 from picamera.array import PiRGBArray
 # Import Utility
-from lib.util import Utility
+from .util import Utility
 
 class FaceDetection:
 

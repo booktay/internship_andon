@@ -15,7 +15,8 @@ from time import sleep
 # Import PiCamera Module
 from picamera import PiCamera
 from picamera.array import PiRGBArray
-from lib.util import Utility
+from .util import Utility
+from .database import DatabaseConnection
 
 class FaceRecognition:
 
@@ -68,10 +69,15 @@ class FaceRecognition:
                     cv.putText(image, name, (x+5, y-5), font, 1, (255, 255, 0), 2)
                     confidence_str = "{0}%".format(round(100 - confidence))
                     cv.putText(image, confidence_str, (x+5, y+h-5), font, 1, (255, 255, 0), 1)
+                    cv.imwrite("a.jpg", image)
                     if not name == "unknown":
-                        print("Username : " + name + ", Confident : " + confidence_str)
-                        num_face += 1
-                        self.util.imageWrite(num_face, image)
+                        # DatabaseConnection().updateStatusUser(name)
+                        # return name , confidence
+                        break
+                        # For write image to disk
+                        # print("Username : " + name + ", Confident : " + confidence_str)
+                        # num_face += 1
+                        # self.util.imageWrite(num_face, image)
 
                 if show:
                     cv.imshow("Frame", image)
@@ -86,4 +92,3 @@ class FaceRecognition:
                     break
         else:
             print("[Error] Please check camera connection.")
-        return 1

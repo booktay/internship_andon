@@ -4,9 +4,11 @@
 # ====      Andon Camera     ====
 # ===============================
 
-from lib.face_detection import FaceDetection
-from lib.face_training import FaceTraining
-from lib.face_recognition import FaceRecognition
+from .face_detection import FaceDetection
+from .face_training import FaceTraining
+from .face_recognition import FaceRecognition
+from .database import DatabaseConnection
+
 
 class AndonCamera:
 
@@ -20,7 +22,7 @@ class AndonCamera:
         return FaceTraining(username, all)
 
     def faceRecognition(self, show=False):
-        return FaceRecognition(show)
+        FaceRecognition(show)
 
     def autoTraining(self, username=None, source=None, path=None):
         print("[Initial] Start auto program...")

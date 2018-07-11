@@ -12,7 +12,7 @@ import os
 import cv2 as cv
 
 try:
-   from config import IMG_STD_PATH, TRAIN_PATH, EXAMPLE_PATH, TRAIN_PATH_MAIN_YML
+   from .config import IMG_STD_PATH, TRAIN_PATH, EXAMPLE_PATH, TRAIN_PATH_MAIN_YML
 except ImportError:
    pass
 

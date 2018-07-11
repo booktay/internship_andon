@@ -9,7 +9,7 @@
 import sys
 import os
 import speech_recognition as sr
-from lib.util import Utility
+from util import Utility
 
 class VoiceSpeech:
 
@@ -25,3 +25,5 @@ class VoiceSpeech:
             except:
                 print("...")
                 pass
+
+VoiceSpeech()

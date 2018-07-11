@@ -1,18 +1,21 @@
-
 # Siwanont Sittinam
 # File .gitignore
 
 # PYC File
-python/*.pyc
-python/lib/*.pyc
+python/andonpy/*.pyc
+python/andonpy/lib/*.pyc
 
 # __pycache__/ Directory
-python/__pycache__/
-python/lib/__pycache__/
+python/andonpy/__pycache__/
+python/andonpy/lib/__pycache__/
 
 # General By
 example/
 temp/
 
 # Config File
-python/lib/config.py
+python/andonpy/lib/config.py
+
+# Node Module
+nodejs/node_modules/
+nodejs/myapp/node_modules/

@@ -4,8 +4,8 @@
 # ====       Andon Main      ====
 # ===============================
 
-from andon_camera import AndonCamera
-from andon_voice import AndonVoice
+from lib.andon_camera import AndonCamera
+from lib.andon_voice import AndonVoice
 
 class Andon:
 
@@ -29,7 +29,5 @@ class Andon:
     def andonVoice(self):
         AndonVoice().voiceSpeech()
 
-# Andon().andonCamera()
-Andon().andonVoice()
 
 
