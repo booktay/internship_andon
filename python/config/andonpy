@@ -1,9 +1,0 @@
-server {
-    listen 81;
-    server_name 10.1.33.9;
-
-    location / {
-        include uwsgi_params;
-        uwsgi_pass unix:/home/pi/andon/python/andonpy/andonpy.sock;
-    }
-}
