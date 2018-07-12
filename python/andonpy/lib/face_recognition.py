@@ -69,15 +69,19 @@ class FaceRecognition:
                     cv.putText(image, name, (x+5, y-5), font, 1, (255, 255, 0), 2)
                     confidence_str = "{0}%".format(round(100 - confidence))
                     cv.putText(image, confidence_str, (x+5, y+h-5), font, 1, (255, 255, 0), 1)
-                    cv.imwrite("a.jpg", image)
-                    if not name == "unknown":
+
+                cv.imwrite("a.jpg", image)
+
+                yield (b'--frame\r\n'
+                        b'Content-Type: image/jpeg\r\n\r\n' + open('a.jpg', 'rb').read() + b'\r\n')
+                    # if not name == "unknown":
                         # DatabaseConnection().updateStatusUser(name)
-                        # return name , confidence
-                        break
+                        # break
                         # For write image to disk
                         # print("Username : " + name + ", Confident : " + confidence_str)
                         # num_face += 1
                         # self.util.imageWrite(num_face, image)
+
 
                 if show:
                     cv.imshow("Frame", image)
