@@ -1,16 +1,16 @@
 from flask import Flask, render_template, Response
-from lib.andon_camera import AndonCamera
+# from lib.andon_camera import AndonCamera
 
 app = Flask(__name__)
 
 @app.route('/')
 def index():
+    # AndonCamera().faceRecognition()
     return render_template('index.html')
 
 
 def gen():
     """Video streaming generator function."""
-    AndonCamera().faceRecognition()
     while True:
         yield (b'--frame\r\n'
             b'Content-Type: image/jpeg\r\n\r\n' + open('a.jpg', 'rb').read() + b'\r\n')

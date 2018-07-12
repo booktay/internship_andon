@@ -1,0 +1,12 @@
+[Unit]
+Description=uWSGI instance to serve myproject
+After=network.target
+
+[Service]
+User=pi
+Group=www-data
+WorkingDirectory=/home/pi/andon/python/andonpy
+ExecStart=/usr/local/bin/uwsgi --ini andonpy.ini
+
+[Install]
+WantedBy=multi-user.target
