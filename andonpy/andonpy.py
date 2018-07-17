@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# Siwanont Sittinam
+# Main
+
 from flask import Flask, jsonify, render_template, request, Response
 # from lib.face_recognition import FaceRecognition
 # Import management linux system module
@@ -80,44 +84,16 @@ def stream():
 def show_rec():
     return Response(stream(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-@app.route('/stream_dec')
-def stream_dec():
-    username = request.form['inpuser']
-    img_path_general = util.findPath(username)
-    name_dir = util.findNameDir(username)
-    if img_path_general is None and name_dir is None:
-        name_dir = str(util.numofUser()) + "." + username
-        img_path_general = os.path.join(util.imgRPath(), name_dir)
-        os.mkdir(img_path_general)
-    if camera:
-        sleep(0.5)
-        # Initialize sampling face count
-        count = 0
-        for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
-            image = frame.array
+def shutdown_server():
+    func = request.environ.get('werkzeug.server.shutdown')
+    if func is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    func()
 
-            # flip image
-            image = cv.flip(image, -1)
-
-            # converse color to gray
-            gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
-
-            # find face by HAARCascade algorithm
-            faces = face_cascade.detectMultiScale(gray, 1.3, 5)
-
-            # draw face in image
-            for (x, y, w, h) in faces:
-                cv.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
-                count += 1
-                filename = name_dir + '.' + str(count) + ".jpg"
-                cv.imwrite(os.path.join(util.img_path_general, filename), gray[y:y+h, x:x+w])
-
-            rawCapture.truncate(0)
-            print(i, end='')
-            if count >= 30:
-                print()
-                return "Detect 30 images"
-        return "Unsuccessful"
+@app.route('/shutdown', methods=['POST'])
+def shutdown():
+    shutdown_server()
+    return 'Server shutting down...'
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', threaded=True)
