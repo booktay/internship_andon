@@ -6,92 +6,53 @@
 
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
-        <title>Video Streaming</title>
+        <title>Andon : Recognition</title>
     </head>
 
-    <body data-gr-c-s-loaded="true" class="bg-secondary">
+    <body class="bg-secondary">
         <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
-            <a class="navbar-brand" href="#">Andon : Camera Streaming</a>
-        </nav>
-        <div class="container" style="max-width: 1500px; margin-top: 30px">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card mb-6 box-shadow bg-secondary">
-                        <div class="card bg-secondary" style="width: 45rem;">
-                            <img class="card-img-top bg-secondary" src="{{ url_for('show_rec') }}" alt="Card image cap">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="row">
-                        <div class="card w-50 bg-light" style="margin-top: 2px; margin-right: 10px;">
-                            <div class="card-body">
-                                <h5 class="card-title">Detection</h5>
-                                <form>
-                                    <div class="form-group">
-                                        <label for="c">Please input username</label>
-                                        <input class="form-control" id="inpuser" placeholder="username">
-                                    </div>
-                                </form>
-                                <button type="button" href="#" class="btn btn-primary btn-lg btn-block" id="btndec">Detection</button>
-                            </div>
-                        </div>
-                        <div class="card bg-dark" style="width:350px; margin-top: 2px; margin-right: 10px;">
-                            <h3 id="dectxt" class="text-light" style="text-align: center"></h3>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="card w-100 bg-light" style="margin-top: 20px; margin-right: 15px;">
-                            <div class="card-body">
-                                <h5 class="card-title" style="text-align: center">Training</h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="card w-50 bg-light" style="margin-top: 15px; margin-right: 10px;">
-                            <div class="card-body">
-                                <h5 class="card-title">Recognition</h5>
-                                <p class="card-text">With supporting text.</p>
-                                <button type="button" href="#" class="btn btn-primary btn-lg btn-block" id="btnrec">Recognition</button>
-                            </div>
-                        </div>
-                        <div class="card bg-dark" style="width:350px; margin-top: 15px; ">
-                            <h1 id="user" class="text-light" style="text-align: center">User</h1>
-                        </div>
-                    </div>
+            <a class="navbar-brand" href="#">Andon : Recognition</a>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-item nav-link active" href="" onclick="javascript:event.target.port=80">Home
+                        <span class="sr-only">(current)</span>
+                    </a>
+                    <a class="nav-link" href="/shutdown">Close server</a>
                 </div>
             </div>
+        </nav>
+        <div>
+            <!-- <div class="col-md-8" style="margin-left: 4%"> -->
+                <img class="img-fluid rounded mx-auto d-block" style="width: 70%; height: auto;" src="{{ url_for('frame') }}">
+            <!-- </div> -->
+            <!-- <div class="col-md-3">
+                <div class="card w-100 bg-light" >
+                    <div class="card-body">
+                        <h5 class="card-title">Dataset</h5>
+                        <form>
+                            <div class="form-group">
+                                <label for="c">Please input username</label>
+                                <input class="form-control" id="inpuser" placeholder="username">
+                            </div>
+                        </form>
+                        <input type="submit" href="#" class="btn btn-primary btn-lg btn-block" name="action" id="btndec" value="Enter">
+                    </div>
+                </div>
+            </div> -->
         </div>
-        <nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark">
-            <div class="collapse navbar-collapse" id="navbarsExample02">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="" onclick="javascript:event.target.port=80">Home
-                            <span class="sr-only">(current)</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <div class="footer-copyright fixed-bottom text-center bg-dark">© Internship Project
+        </div>
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
         <script type=text/javascript>
-            $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
-            $(function() {
-                $('button#btnrec').click(function(){
-                    $.get($SCRIPT_ROOT + '/get_name', function(data, status){
-                        $('h1#user').text(data);
-                    });
-                });
-                $('button#btndec').click(function(){
-                    $.get($SCRIPT_ROOT + '/shutdown', function(data, status){
-                        $('h3#dectxt').text($('input#inpuser').text() + data );
-                    });
-                });
-            });
+            // $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+            // $(function() {
+            //     $('button#btndec').click(function(){
+
+            //     });
+            // });
         </script>
     </body>
 

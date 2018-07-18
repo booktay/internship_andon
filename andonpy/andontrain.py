@@ -5,10 +5,9 @@
 # Import necessary modules
 import optparse as optparse
 import sys as sys
-# from lib.face_detection import FaceDetection
-# from lib.face_training import FaceTraining
 
-from lib.create_dataset import CreateDataset, app
+from lib.create_dataset import CreateDataset
+from lib.train_dataset import Training
 from lib.utility import Utility
 util = Utility()
 
@@ -33,7 +32,8 @@ def createDataset(source, name):
 
 def trainDataset():
     print('[Initial] train all datasets')
-    # FT = FaceTraining()
+    Training().train()
+
 
 def main():
     parse = optparse.OptionParser()
@@ -47,9 +47,12 @@ def main():
     options, arguments = parse.parse_args()
 
     if options.auto and not options.create and not options.train:
+        if not options.name:
+            print("[Error] Input username \n")
+            whenError(parse)
         print("[Initial] Auto mode")
         print("[Initial] Creating dataset by camera and Training all datasets")
-        createDataset(source="camera")
+        createDataset("camera", options.name)
         trainDataset()
     elif options.create and not options.train and not options.auto:
         if options.source and options.name : createDataset(options.source, options.name)

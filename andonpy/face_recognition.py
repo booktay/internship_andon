@@ -1,9 +1,6 @@
-# ===============================
-# ====       Python 3.7      ====
-# ====   Siwanont Sittinam   ====
-# ==== Andon PiCamera Module ====
-# ====   Face Recognition    ====
-# ===============================
+#!/usr/bin/env python
+# Siwanont Sittinam
+# Recognition
 
 # Import management linux system module
 import sys

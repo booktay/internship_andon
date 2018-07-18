@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, request, Response, redirect, url_for
+from flask import Flask, render_template, request, Response, redirect, url_for
 import logging as logging
 
 from picamera import PiCamera
@@ -59,7 +59,7 @@ def createDataset():
         count = 0
 
         for frame in camera.capture_continuous(stream, format="bgr", use_video_port=True):
-            if count == 15:
+            if count == 100:
                 print("[Successful] create 100 images")
                 break
                 # return redirect(url_for('shutdown'))
