@@ -18,28 +18,42 @@ util = Utility()
 
 face_cascade = cv.CascadeClassifier(util.HAARPath())
 
+name = "unknown"
+
 class CreateDataset():
 
-    def __init__(self):
-        pass
+    def __init__(self, username):
+        self.name = username
+        global name
+        name = username
+
+    def run(self):
+        app.run(host='0.0.0.0', threaded=True)
 
 @app.route('/')
 def index():
     return render_template('create.html')
 
-
-def createDataset(user):
-    check_user = util.haveUser("books")
+def createDataset():
+    global name
+    USER = name
+    check_user = util.haveUser(USER)
     if check_user[0] is "0":
-        break
+        USER_PATH = str(util.numUser()) + "." + USER
+        PATH = os.path.join(util.IMGROOTPath(),USER_PATH)
+        os.mkdir(PATH)
+        print("[Initial] Create " + USER + " dataset")
+    else:
+        print("[Initial] Found " + check_user[1] + " dataset")
+        print("[Initial] Recreate " + check_user[1] + " dataset")
 
     with PiCamera(resolution=(1280, 720), framerate=40) as camera:
         print("[Initial] Camera is active...")
         print("[Initial] Please look at the camera and wait a minute...")
 
         camera.rotation = 180
-        camera.brightness = 60
-        camera.contrast = -5
+        camera.brightness = 55
+        camera.contrast = 5
         stream = PiRGBArray(camera)
 
         count = 0

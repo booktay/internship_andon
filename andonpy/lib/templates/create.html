@@ -6,10 +6,10 @@
 
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
-        <title>Video Streaming</title>
+        <title>Andon : Create dataset</title>
     </head>
 
-    <body data-gr-c-s-loaded="true" class="bg-secondary">
+    <body class="bg-secondary">
         <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
             <a class="navbar-brand" href="#">Andon : Create image datasets</a>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
@@ -21,29 +21,38 @@
                 </div>
             </div>
         </nav>
-        <div class="container">
-            <img class="" style="width: 100%; height: auto;" src="{{ url_for('frame') }}">
+        <div>
+            <!-- <div class="col-md-8" style="margin-left: 4%"> -->
+                <img class="img-fluid rounded mx-auto d-block" style="width: 70%; height: auto;" src="{{ url_for('frame') }}">
+            <!-- </div> -->
+            <!-- <div class="col-md-3">
+                <div class="card w-100 bg-light" >
+                    <div class="card-body">
+                        <h5 class="card-title">Dataset</h5>
+                        <form>
+                            <div class="form-group">
+                                <label for="c">Please input username</label>
+                                <input class="form-control" id="inpuser" placeholder="username">
+                            </div>
+                        </form>
+                        <input type="submit" href="#" class="btn btn-primary btn-lg btn-block" name="action" id="btndec" value="Enter">
+                    </div>
+                </div>
+            </div> -->
         </div>
-        <nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark" style="margin-top: 20px">
-        </nav>
-        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <div class="footer-copyright fixed-bottom text-center bg-dark">© Internship Project
+        </div>
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
         <script type=text/javascript>
-            $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
-            $(function() {
-                $('button#btnrec').click(function(){
-                    $.get($SCRIPT_ROOT + '/get_name', function(data, status){
-                        $('h1#user').text(data);
-                    });
-                });
-                $('button#btndec').click(function(){
-                    $.get($SCRIPT_ROOT + '/shutdown', function(data, status){
-                    });
-                });
-            });
+            // $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+            // $(function() {
+            //     $('button#btndec').click(function(){
+
+            //     });
+            // });
         </script>
     </body>
 

@@ -8,7 +8,7 @@ import sys as sys
 # from lib.face_detection import FaceDetection
 # from lib.face_training import FaceTraining
 
-from lib.create_dataset  import app
+from lib.create_dataset import CreateDataset, app
 from lib.utility import Utility
 util = Utility()
 
@@ -16,19 +16,19 @@ def whenError(parser):
     parser.print_help()
     sys.exit(1)
 
-def createDataset(source):
+def createDataset(source, name):
     source = source.lower()
+    name = name.lower()
     print('[Initial] create dataset')
     # FD = FaceDetection()
     if source == "camera":
         print('[Initial] detect faces with camera')
         for ip in util.getIP():
-            print("[Initial] Running on http://"+ ip[1] + ":5000/ for interfaces " + ip[0])
-        app.run(host='0.0.0.0', threaded=True)
+            print("[Initial]  * Running on http://"+ ip[1] + ":5000/ for interfaces " + ip[0])
+        print("[Initial] Please open the following link.")
+        CreateDataset(name).run()
     elif source == "image":
         print('[Initial] detect faces with image')
-        # name = input('[Initial] Input username : ')
-        # FD.image()
         print("Coming soon")
 
 def trainDataset():
@@ -37,6 +37,7 @@ def trainDataset():
 
 def main():
     parse = optparse.OptionParser()
+    parse.add_option('-n', '--name', help="input username", dest="name")
     parse.add_option('-c', '--create', default=False, action="store_true" , help="create dataset", dest="create")
     parse.add_option('-t', '--train', default=False, action="store_true" , help="train all datasets", dest="train")
     parse.add_option('-a', '--auto', default=False, action="store_true" , help="use camera to create dataset and train all datasets", dest="auto")
@@ -51,8 +52,10 @@ def main():
         createDataset(source="camera")
         trainDataset()
     elif options.create and not options.train and not options.auto:
-        if options.source : createDataset(options.source)
-        else : whenError(parse)
+        if options.source and options.name : createDataset(options.source, options.name)
+        else :
+            if not options.name: print("[Error] Input username \n")
+            whenError(parse)
     elif options.train and not options.create and not options.auto:
         if options.source : whenError(parse)
         else : trainDataset()

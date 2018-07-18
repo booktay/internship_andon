@@ -38,6 +38,9 @@ class Utility:
             NAME.append(os.path.join(IMG_STD_PATH, ".".join(str(N) for N in NAME)))
         return NAMES
 
+    def numUser(self):
+        return len(os.listdir(IMG_STD_PATH))
+
     def haveUser(self, USERNAME="unknown"):
         NAMES = self.User()
         for NAME in NAMES:
