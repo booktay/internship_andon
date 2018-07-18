@@ -31,7 +31,7 @@ def index():
 def createDataset(user):
     check_user = util.haveUser("books")
     if check_user[0] is "0":
-        pass
+        break
 
     with PiCamera(resolution=(1280, 720), framerate=40) as camera:
         print("[Initial] Camera is active...")
