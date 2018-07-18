@@ -12,7 +12,7 @@ import os
 import cv2 as cv
 import numpy as np
 from PIL import Image
-from .util import Utility
+from utility import Utility
 
 class FaceTraining:
 

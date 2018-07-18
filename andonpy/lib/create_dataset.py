@@ -1,45 +1,38 @@
-#!/usr/bin/env python
-# Siwanont Sittinam
-# Main
-
 from flask import Flask, jsonify, render_template, request, Response, redirect, url_for
+import logging as logging
 
-# Import management linux system module
-import sys
-import os
-# Import image processing module
-import cv2 as cv
-# Import delay module
-from time import sleep
-# Import PiCamera Module
 from picamera import PiCamera
 from picamera.array import PiRGBArray
-from lib.utility import Utility
-# from .lib.database import DatabaseConnection
+
+import sys as sys
+import os as os
+import cv2 as cv
 
 app = Flask(__name__)
+log = logging.getLogger('werkzeug')
+log.disabled = True
+app.logger.disabled = True
 
+from .utility import Utility
 util = Utility()
 
-# recognizer = cv.face.LBPHFaceRecognizer_create()
-# recognizer.read(util.TRAINPath())
-
-# Initial face_cascade lib path
 face_cascade = cv.CascadeClassifier(util.HAARPath())
 
-#Config font
-font = cv.FONT_HERSHEY_SIMPLEX
+class CreateDataset():
 
-
-name = "unknown"
-
+    def __init__(self):
+        pass
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('create.html')
 
 
-def stream():
+def createDataset(user):
+    check_user = util.haveUser("books")
+    if check_user[0] is "0":
+        pass
+
     with PiCamera(resolution=(1280, 720), framerate=40) as camera:
         print("[Initial] Camera is active...")
         print("[Initial] Please look at the camera and wait a minute...")
@@ -50,20 +43,22 @@ def stream():
         stream = PiRGBArray(camera)
 
         count = 0
-        check_user = util.haveUser("books")
+
         for frame in camera.capture_continuous(stream, format="bgr", use_video_port=True):
+            if count == 15:
+                print("[Successful] create 100 images")
+                break
+                # return redirect(url_for('shutdown'))
+
             image = frame.array
             gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
 
             faces = face_cascade.detectMultiScale(gray, 1.3, 5)
-            for (x,y,w,h) in faces:
+            for (x, y, w, h) in faces:
                 count += 1
                 cv.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
-                if not check_user[0] is "0" and count < 100:
-                    filename = check_user[0] + '.' + check_user[1] + "." + str(count) + ".jpg"
-                    cv.imwrite(os.path.join(check_user[2], filename), image[y:y+h, x:x+w])
-                if count == 15:
-                    camera.close()
+                filename = check_user[0] + '.' + check_user[1] + "." + str(count) + ".jpg"
+                cv.imwrite(os.path.join(check_user[2], filename), image[y:y+h, x:x+w])
 
             cv.imwrite("img.jpg", image)
 
@@ -73,9 +68,10 @@ def stream():
             stream.truncate()
             stream.seek(0)
 
-@app.route('/show_rec')
-def show_rec():
-    return Response(stream(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route('/frame')
+def frame():
+    return Response(createDataset(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 def shutdown_server():

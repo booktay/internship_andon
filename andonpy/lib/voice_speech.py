@@ -1,15 +1,12 @@
-# ===============================
-# ====       Python 3.7      ====
-# ====   Siwanont Sittinam   ====
-# ==== Andon PiCamera Module ====
-# ====    Voice to Speech    ====
-# ===============================
+#!/usr/bin/env python
+# Siwanont Sittinam
+# Speech
 
 # Import management linux system module
-import sys
-import os
+import sys as sys
+import os as os
 import speech_recognition as sr
-from util import Utility
+from utility import Utility
 
 class VoiceSpeech:
 
@@ -19,11 +16,7 @@ class VoiceSpeech:
             print("Say something")
             audio = r.listen(source)
             print("Process")
-
             try:
                 print("Text : " + r.recognize_google(audio))
             except:
-                print("...")
                 pass
-
-VoiceSpeech()

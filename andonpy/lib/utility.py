@@ -8,10 +8,11 @@ import os as os
 import cv2 as cv
 import pprint as pp
 from pymongo import MongoClient
+import netifaces as netif
 
 # Import environment variables
 try:
-   from config import IMG_STD_PATH, TRAIN_PATH_MAIN_YML, MONGO_PATH, DATABASE_NAME, COLLECTION_NAME
+   from .config import IMG_STD_PATH, TRAIN_LBPH_YML, TRAIN_EIGE_YML, TRAIN_FICH_YML, MONGO_PATH, DATABASE_NAME, COLLECTION_NAME
 except ImportError:
    pass
 
@@ -28,8 +29,8 @@ class Utility:
     def IMGROOTPath(self):
         return IMG_STD_PATH
 
-    def YMLPath(self):
-        return TRAIN_PATH_MAIN_YML
+    def TRAINPath(self):
+        return [TRAIN_LBPH_YML, TRAIN_EIGE_YML, TRAIN_FICH_YML]
 
     def User(self):
         NAMES = sorted([name.split('.') for name in os.listdir(IMG_STD_PATH)])
@@ -55,6 +56,14 @@ class Utility:
             SAVE_PATH = os.path.join(path, name.lower() + "." + type.lower())
             return cv.imwrite(SAVE_PATH, file)
         return None
+
+    def getIP(self):
+        ALL_IP = []
+        for interface in netif.interfaces():
+            ip = netif.ifaddresses(interface)
+            if 2 in ip.keys():
+                ALL_IP.append([interface,ip[2][0]['addr']])
+        return ALL_IP
 
     # Mongo
     def getUser(self, username=None, id=None):
