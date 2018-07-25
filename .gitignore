@@ -19,3 +19,4 @@ andonpy/lib/config.py
 
 # Node Module
 andonnode/node_modules/
+andonnode/config

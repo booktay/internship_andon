@@ -37,7 +37,7 @@ def index():
 def stream():
     global name
 
-    with PiCamera(resolution=(1280, 720), framerate=40) as camera:
+    with PiCamera(resolution=(1280, 720), framerate=90) as camera:
         print("[Initial] Camera is active...")
         print("[Initial] Please look at the camera and wait a minute...")
 
@@ -65,9 +65,9 @@ def stream():
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + open('img.jpg', 'rb').read() + b'\r\n')
 
-            if not name is "unknown":
+            # if not name is "unknown":
                 # util.updateUser()
-                return name
+                # return name
 
             stream.truncate()
             stream.seek(0)

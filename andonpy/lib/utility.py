@@ -9,6 +9,7 @@ import cv2 as cv
 import pprint as pp
 from pymongo import MongoClient
 import netifaces as netif
+import requests
 
 # Import environment variables
 try:
@@ -62,11 +63,15 @@ class Utility:
 
     def getIP(self):
         ALL_IP = []
+        print('[Initial] Recognition with camera')
+        port = 5001
         for interface in netif.interfaces():
             ip = netif.ifaddresses(interface)
-            if 2 in ip.keys():
-                ALL_IP.append([interface,ip[2][0]['addr']])
-        return ALL_IP
+            try:
+                print("[Initial]  * Running on http://" + ip[2][0]['addr'] + ":" + str(port) + "/ for interfaces " + interface)
+            except:
+                pass
+        print("[Initial] Please open the following link.")
 
     # Mongo
     def getUser(self, username=None, id=None):
@@ -93,3 +98,9 @@ class Utility:
         }
         res = self.COLLECTION.update_one({'username': username}, {"$set": QUERY})
         return res.modified_count
+
+    # NodeJS
+    def reqRes(self, ip = None, username = None):
+        if username is None and ip is None:
+            return None
+        return requests.post(ip, data={'username': username}).json()

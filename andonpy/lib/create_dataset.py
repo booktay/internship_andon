@@ -28,7 +28,7 @@ class CreateDataset():
         name = username
 
     def run(self):
-        app.run(host='0.0.0.0', threaded=True)
+        app.run(host='0.0.0.0', port=5001, threaded=True)
 
 @app.route('/')
 def index():
@@ -47,11 +47,12 @@ def createDataset():
         print("[Initial] Found " + check_user[1] + " dataset")
         print("[Initial] Recreate " + check_user[1] + " dataset")
 
+    check_user = util.haveUser(USER)
     with PiCamera(resolution=(1280, 720), framerate=40) as camera:
         print("[Initial] Camera is active...")
         print("[Initial] Please look at the camera and wait a minute...")
 
-        camera.rotation = 180
+        #camera.rotation = 180
         camera.brightness = 55
         camera.contrast = 5
         stream = PiRGBArray(camera)
@@ -59,7 +60,7 @@ def createDataset():
         count = 0
 
         for frame in camera.capture_continuous(stream, format="bgr", use_video_port=True):
-            if count == 100:
+            if count >= 100:
                 print("[Successful] create 100 images")
                 break
                 # return redirect(url_for('shutdown'))
@@ -73,6 +74,7 @@ def createDataset():
                 cv.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
                 filename = check_user[0] + '.' + check_user[1] + "." + str(count) + ".jpg"
                 cv.imwrite(os.path.join(check_user[2], filename), image[y:y+h, x:x+w])
+                print("[Save] " + filename)
 
             cv.imwrite("img.jpg", image)
 
