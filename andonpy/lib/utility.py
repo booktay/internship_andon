@@ -7,7 +7,7 @@ import sys as sys
 import os as os
 import cv2 as cv
 import pprint as pp
-from pymongo import MongoClient
+# from pymongo import MongoClient
 import netifaces as netif
 import requests
 
@@ -21,8 +21,8 @@ class Utility:
 
     def __init__(self):
         self.HAAR_PATH = os.popen("find /usr -name haarcascade_frontalface_default.xml -print -quit").read().split('\n')[0]
-        self.DB_CONNECTION = MongoClient(MONGO_PATH)
-        self.COLLECTION = self.DB_CONNECTION[DATABASE_NAME][COLLECTION_NAME]
+        # self.DB_CONNECTION = MongoClient(MONGO_PATH)
+        # self.COLLECTION = self.DB_CONNECTION[DATABASE_NAME][COLLECTION_NAME]
 
     def HAARPath(self):
         return self.HAAR_PATH
@@ -74,33 +74,34 @@ class Utility:
         print("[Initial] Please open the following link.")
 
     # Mongo
-    def getUser(self, username=None, id=None):
-        QUERY = {}
-        if not id is None:
-            QUERY['id'] = id
-        elif not username is None:
-            QUERY['username'] = username.lower()
-        DOCUMENT = self.COLLECTION.find_one(QUERY)
-        if DOCUMENT : return DOCUMENT
-        return None
+    # def getUser(self, username=None, id=None):
+    #     QUERY = {}
+    #     if not id is None:
+    #         QUERY['id'] = id
+    #     elif not username is None:
+    #         QUERY['username'] = username.lower()
+    #     DOCUMENT = self.COLLECTION.find_one(QUERY)
+    #     if DOCUMENT : return DOCUMENT
+    #     return None
 
-    def allUser(self, fields=None):
-        QUERY = {}
-        if not fields is None:
-            QUERY['$project'] = {fields: 1, "status": 1}
-        ALL_USER = self.COLLECTION.aggregate([QUERY])
-        if ALL_USER : return ALL_USER
-        return None
+    # def allUser(self, fields=None):
+    #     QUERY = {}
+    #     if not fields is None:
+    #         QUERY['$project'] = {fields: 1, "status": 1}
+    #     ALL_USER = self.COLLECTION.aggregate([QUERY])
+    #     if ALL_USER : return ALL_USER
+    #     return None
 
-    def updateUser(self, username=None, status=True):
-        QUERY = {
-            "status": status
-        }
-        res = self.COLLECTION.update_one({'username': username}, {"$set": QUERY})
-        return res.modified_count
+    # def updateUser(self, username=None, status=True):
+    #     QUERY = {
+    #         "status": status
+    #     }
+    #     res = self.COLLECTION.update_one({'username': username}, {"$set": QUERY})
+    #     return res.modified_count
 
-    # NodeJS
+    # MongoDB using API NodeJS
     def reqRes(self, ip = None, username = None):
         if username is None and ip is None:
             return None
+        ip = "http://localhost:5000/api/user/updateDB"
         return requests.post(ip, data={'username': username}).json()

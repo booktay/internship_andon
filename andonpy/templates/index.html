@@ -48,12 +48,15 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
         <script type=text/javascript>
             $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
-            $.get("/getshutdown").always(function( data ) {
-                console.log(data)
-                // if data == "True" {
-                    // document.location.href = $SCRIPT_ROOT + "/shutdown";
-                // }
-            });
+
+            var getdown = setInterval(getshutdown, 1000);
+            function getshutdown() {
+                $.get("/getshutdown").always(function( data ) {
+                    if(data == "True") {
+                        document.location.href = $SCRIPT_ROOT + "/shutdown";
+                    }
+                });
+            }
         </script>
     </body>
 

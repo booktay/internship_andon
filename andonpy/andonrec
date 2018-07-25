@@ -47,7 +47,7 @@ def stream():
         print("[Initial] Camera is active...")
         print("[Initial] Please look at the camera and wait a minute...")
 
-        #camera.rotation = 180
+        camera.rotation = 180
         camera.brightness = 60
         camera.contrast = 5
         stream = PiRGBArray(camera)
@@ -79,8 +79,9 @@ def stream():
                     check_count = 0
                 else:
                     check_count += 1
-                    if check_count == 2:
+                    if check_count == 20:
                         print("[Verify] " + name)
+                        util.reqRes(name)
                         verif = "True"
 
             yield (b'--frame\r\n'

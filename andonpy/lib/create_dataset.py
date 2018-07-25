@@ -18,7 +18,7 @@ util = Utility()
 
 face_cascade = cv.CascadeClassifier(util.HAARPath())
 
-name = "unknown"
+verif = "False"
 
 class CreateDataset():
 
@@ -33,6 +33,11 @@ class CreateDataset():
 @app.route('/')
 def index():
     return render_template('create.html')
+
+@app.route('/getshutdown')
+def getshutdown():
+    global verif
+    return verif
 
 def createDataset():
     global name
@@ -52,18 +57,19 @@ def createDataset():
         print("[Initial] Camera is active...")
         print("[Initial] Please look at the camera and wait a minute...")
 
-        #camera.rotation = 180
+        camera.rotation = 180
         camera.brightness = 55
         camera.contrast = 5
         stream = PiRGBArray(camera)
 
         count = 0
+        verif = "False"
 
         for frame in camera.capture_continuous(stream, format="bgr", use_video_port=True):
             if count >= 100:
                 print("[Successful] create 100 images")
+                verif = "True"
                 break
-                # return redirect(url_for('shutdown'))
 
             image = frame.array
             gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
