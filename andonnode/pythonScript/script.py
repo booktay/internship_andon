@@ -1,15 +1,12 @@
-# # import requests
-
-# # username = 'crsherbet'
-
-# # response = requests.post('http://localhost:5000/api/git/info', data ={'username': username}).json()
-
-# # print(response)
-
-
 import time
 from neopixel import *
 import argparse
+import os
+from luma.core.virtual import terminal
+from luma.core.interface.serial import i2c
+from luma.oled.device import ssd1306
+from PIL import ImageFont
+import multiprocessing as mp
 
 # LED strip configuration:
 LED_COUNT      = 2      # Number of LED pixels.
@@ -21,7 +18,44 @@ LED_BRIGHTNESS = 255     # Set to 0 for darkest and 255 for brightest
 LED_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
 LED_CHANNEL    = 0       # set to '1' for GPIOs 13, 19, 41, 45 or 53
 
+def make_font(name, size):
+    font_path = os.path.abspath(os.path.join(
+        os.path.dirname(__file__), 'fonts', name))
+    return ImageFont.truetype(font_path, size)
 
+def welcome():
+     while True:
+        for fontname, size in [("miscfs_.ttf", 16)]:
+            font = make_font(fontname, size) if fontname else None
+            term = terminal(device, font)
+            term.println("    Welcome")
+            term.println("      To")
+            term.puts("  Andon Monitor")
+            time.sleep(3)
+            term.clear()
+
+# def gitInfo():
+#     for fontname, size in [("miscfs_.ttf", 12)]:
+#         font = make_font(fontname, size) if fontname else None
+#         term = terminal(device, font)
+#         term.println("    Andon Monitor")
+#         term.println("---------------------")
+#         term.println("Gitname : littlenune")
+#         term.println("Reponame : Andonproj")
+#         term.println("Created : 2018/07/23")
+#         term.puts("---------------------")
+        # time.sleep(10)
+        # term.clear()
+
+def displayInfo(name,score):
+    for fontname, size in [("miscfs_.ttf",12)]:
+        font = make_font(fontname, size) if fontname else None
+        term = terminal(device, font)
+        term.println("    Andon Monitor")
+        term.println("---------------------")
+        term.println("%s : %s" % (name,score))
+        term.puts("---------------------")
+        time.sleep(30)
 
 # Define functions which animate LEDs in various ways.
 
@@ -101,26 +135,43 @@ if __name__ == '__main__':
     parser.add_argument('-fq', '--frequency',type=int ,help='frequency of commits value')
 
     args = parser.parse_args()
+    serial = i2c(port=1, address=0x3C)
+    device = ssd1306(serial)
+#
     strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT, LED_BRIGHTNESS, LED_CHANNEL)
     strip.begin()
-# g r b
+
     try:
         if args.overall:
-            theaterChase(strip, Color(100-args.overall, args.overall + 20, 0), 60, 90)    
+            p = mp.Process(target=displayInfo, args=("Overall Health score",args.overall))
+            p.start()
+            theaterChase(strip, Color(100-args.overall, args.overall + 20, 0), 100, 90)        
         elif args.bugspot:
-            shine(strip, Color(255-(args.bugspot*10), args.bugspot*10 , 0), 10000)
+            p = mp.Process(target=displayInfo, args=("Bugspot Analyze score",args.bugspot))
+            p.start()
+            shine(strip, Color(255-(args.bugspot*10), args.bugspot*10 , 0), 20000)
         elif args.complexity:
-            shine(strip, Color(255-(args.complexity*10), args.complexity*10, 0), 10000)
+            p = mp.Process(target=displayInfo, args=("Complexity score",args.complexity))
+            p.start()
+            shine(strip, Color(255-(args.complexity*10), args.complexity*10, 0), 20000)
         elif args.duplication:
-            shine(strip, Color(255-(args.duplication*10), args.duplication*10, 0), 10000)
+            p = mp.Process(target=displayInfo, args=("Duplication score",args.duplication))
+            p.start()
+            shine(strip, Color(255-(args.duplication*10), args.duplication*10, 0), 20000)
         elif args.outdated:
-            shine(strip, Color(255-(args.outdated*10), args.outdated*10 , 0), 10000)
+            p = mp.Process(target=displayInfo, args=("Outdated score",args.outdated))
+            p.start() 
+            shine(strip, Color(255-(args.outdated*10), args.outdated*10 , 0), 20000)
         elif args.frequency:
+            p = mp.Process(target=displayInfo, args=("Frequency of commits",'22'))
+            p.start()
             theaterChase(strip, Color(20,130,20), args.frequency, 60) 
         elif args.welcome:
+            welcome()
             theaterChaseRainbow(strip, 30)
             theaterChase(strip, Color(127,127,127), 120, 45) 
         colorWipe(strip, Color(0,0,0), 10)
+        p.terminate()
 
     except KeyboardInterrupt:
         if args.clear:

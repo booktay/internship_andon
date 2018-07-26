@@ -33,7 +33,7 @@ class CreateDataset():
 
 @app.route('/')
 def index():
-    return render_template('create.html')
+    return render_template('index.html')
 
 @app.route('/getshutdown')
 def getshutdown():
@@ -42,6 +42,8 @@ def getshutdown():
 
 def createDataset():
     global name
+    global verif
+
     USER = name
     check_user = util.haveUser(USER)
     if check_user[0] is "0":
@@ -107,7 +109,7 @@ def shutdown_server():
 @app.route('/shutdown')
 def shutdown():
     shutdown_server()
-    return 'Server shutting down...'
+    return "[No service] Server is closed"
 
 
 if __name__ == '__main__':

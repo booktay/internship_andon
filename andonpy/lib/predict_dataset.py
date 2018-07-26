@@ -88,10 +88,12 @@ def stream():
                     check_count = 0
                 else:
                     check_count += 1
-                    if check_count == 20:
+                    if check_count == 10:
                         print("[Verify] " + name)
-                        util.reqRes(name)
-                        verif = "True"
+                        chk = util.reqRes(name)
+                        print(chk)
+                        if not chk is "Not found":
+                            verif = "True"
 
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + open('img.jpg', 'rb').read() + b'\r\n')
@@ -114,7 +116,7 @@ def shutdown_server():
 @app.route('/shutdown')
 def shutdown():
     shutdown_server()
-    return 'Server shutting down...'
+    return '[No service] Server is closed'
 
 
 if __name__ == '__main__':

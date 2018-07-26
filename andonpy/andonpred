@@ -2,10 +2,6 @@
 # Siwanont Sittinam
 # Recognition Control
 
-#!/usr/bin/env python
-# Siwanont Sittinam
-# Train & Create Control
-
 # Import necessary modules
 import optparse as optparse
 import sys as sys

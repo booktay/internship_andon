@@ -100,8 +100,8 @@ class Utility:
     #     return res.modified_count
 
     # MongoDB using API NodeJS
-    def reqRes(self, ip = None, username = None):
-        if username is None and ip is None:
-            return None
+    def reqRes(self, username = None):
+        if username is None:
+            return "Not found"
         ip = "http://localhost:5000/api/user/updateDB"
         return requests.post(ip, data={'username': username}).json()
