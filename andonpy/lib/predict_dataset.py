@@ -41,12 +41,15 @@ class PredictDataset():
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('predict.html')
 
-@app.route('/getshutdown')
-def getshutdown():
+@app.route('/getname')
+def getname():
     global verif
-    return verif
+    global name
+    if verif is "True"
+        return name
+    return "Unknown"
 
 def stream():
     global name

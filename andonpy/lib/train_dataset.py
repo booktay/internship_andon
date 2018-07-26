@@ -43,8 +43,9 @@ class Training:
         return faces_all, id_all
 
     def train(self):
-        print("[Process] Training faces. It will take a few seconds. Wait...")
+        print("[Process] Training faces. It will take a few minutes. Wait...")
         train_path = util.TRAINPath()
+        print("[Process] Training...")
         face, ids = self.makelabel()
         recognizer_lbph = cv.face.LBPHFaceRecognizer_create()
         recognizer_lbph.train(face, np.array(ids))
