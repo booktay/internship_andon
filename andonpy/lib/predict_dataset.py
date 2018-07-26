@@ -91,7 +91,7 @@ def stream():
                     if check_count == 10:
                         print("[Verify] " + name)
                         chk = util.reqRes(name)
-                        print(chk)
+                        # print(chk)
                         if not chk is "Not found":
                             verif = "True"
 
