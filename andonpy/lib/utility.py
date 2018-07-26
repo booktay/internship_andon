@@ -7,22 +7,23 @@ import sys as sys
 import os as os
 import cv2 as cv
 import pprint as pp
-# from pymongo import MongoClient
-import netifaces as netif
+
+import netifaces as netifaces
 import requests
 
-# Import environment variables
-try:
-   from .config import IMG_STD_PATH, TRAIN_LBPH_YML, TRAIN_EIGE_YML, TRAIN_FICH_YML, MONGO_PATH, DATABASE_NAME, COLLECTION_NAME
-except ImportError:
-   pass
+# PATH
+ROOT_PATH = os.path.join("/home/pi/", "internship_andon")
+IMG_STD_PATH = os.path.join(ROOT_PATH, "image")
+EXAMPLE_PATH = os.path.join(IMG_STD_PATH, "example")
+TRAIN_PATH = os.path.join(ROOT_PATH, "train")
+TRAIN_LBPH_YML = os.path.join(TRAIN_PATH, "lbph.yml")
+TRAIN_EIGE_YML = os.path.join(TRAIN_PATH, "eige.yml")
+TRAIN_FICH_YML = os.path.join(TRAIN_PATH, "fich.yml")
 
 class Utility:
 
     def __init__(self):
         self.HAAR_PATH = os.popen("find /usr -name haarcascade_frontalface_default.xml -print -quit").read().split('\n')[0]
-        # self.DB_CONNECTION = MongoClient(MONGO_PATH)
-        # self.COLLECTION = self.DB_CONNECTION[DATABASE_NAME][COLLECTION_NAME]
 
     def HAARPath(self):
         return self.HAAR_PATH
@@ -65,39 +66,13 @@ class Utility:
         ALL_IP = []
         print('[Initial] Recognition with camera')
         port = 5001
-        for interface in netif.interfaces():
-            ip = netif.ifaddresses(interface)
+        for interface in netifaces.interfaces():
+            ip = netifaces.ifaddresses(interface)
             try:
                 print("[Initial]  * Running on http://" + ip[2][0]['addr'] + ":" + str(port) + "/ for interfaces " + interface)
             except:
                 pass
         print("[Initial] Please open the following link.")
-
-    # Mongo
-    # def getUser(self, username=None, id=None):
-    #     QUERY = {}
-    #     if not id is None:
-    #         QUERY['id'] = id
-    #     elif not username is None:
-    #         QUERY['username'] = username.lower()
-    #     DOCUMENT = self.COLLECTION.find_one(QUERY)
-    #     if DOCUMENT : return DOCUMENT
-    #     return None
-
-    # def allUser(self, fields=None):
-    #     QUERY = {}
-    #     if not fields is None:
-    #         QUERY['$project'] = {fields: 1, "status": 1}
-    #     ALL_USER = self.COLLECTION.aggregate([QUERY])
-    #     if ALL_USER : return ALL_USER
-    #     return None
-
-    # def updateUser(self, username=None, status=True):
-    #     QUERY = {
-    #         "status": status
-    #     }
-    #     res = self.COLLECTION.update_one({'username': username}, {"$set": QUERY})
-    #     return res.modified_count
 
     # MongoDB using API NodeJS
     def reqRes(self, username = None):

@@ -47,7 +47,7 @@ def index():
 def getname():
     global verif
     global name
-    if verif is "True"
+    if verif is "True":
         return name
     return "Unknown"
 

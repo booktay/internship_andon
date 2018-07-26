@@ -7,15 +7,16 @@ const axios = require('axios')
 const validateRegisterInput = require('../../validation/register')
 const validateLoginInput = require('../../validation/login')
 const User = require('../../models/User')
+const { exec } = require('child_process')
 
 //register new user
 router.post('/register', (req, res) => {
     const { errors, isValid } = validateRegisterInput(req.body)
-  
+
     if(!isValid) {
         return res.json(errors)
     }
-    
+
     axios.get('https://api.github.com/users/' + req.body.gitName).then(resp => {
         User.findOne({ username: req.body.username.toLowerCase() }).then(user => {
             if(user) {
@@ -33,11 +34,11 @@ router.post('/register', (req, res) => {
                             gitName: req.body.gitName.toLowerCase(),
                             imgURL: req.body.imgURL
                         })
-            
+
                         bcrypt.genSalt(10, (err, salt) => {
                             bcrypt.hash(newUser.password, salt, (err,hash) => {
-                                if(err) throw err;
-                                newUser.password = hash;
+                                if(err) throw err
+                                newUser.password = hash
                                 newUser.save()
                                     .then(user => res.json(user))
                                     .catch(err => console.log(err))
@@ -45,9 +46,11 @@ router.post('/register', (req, res) => {
                         })
                     }
                 })
-            }} 
+            }}
         )})
         .catch(erraxios => {
+            if(erraxios.response.data.message.slice(0,23) === 'API rate limit exceeded')
+                return ('Github API rate limit exceeded')
             errors.gitName = 'Github username not found'
             return res.json(errors)
         }
@@ -77,7 +80,7 @@ router.post('/login', (req, res) => {
                     if(!user) {
                         errors.username = 'The service is unavailable'
                         return res.json(errors)
-                    } else { 
+                    } else {
                         bcrypt.compare(password, user.password)
                         .then(isMatch => {
                             if(isMatch) {
@@ -86,7 +89,7 @@ router.post('/login', (req, res) => {
                                     res.json({
                                         payload,
                                         success: true,
-                                        token: 'Bearer ' + token 
+                                        token: 'Bearer ' + token
                                     })
                                 })
                             } else {
@@ -106,13 +109,17 @@ router.get('/openCam', (req, res) => {
         if(user) {
             return res.json('The service is unavailable')
         } else {
-            exec('python andonrec', (err,stdout,stderr) => { 
-                if (err) { return res.json(stderr) }
+            exec('python ../andonpy/andonpred', (err,stdout,stderr) => {
+                if (err) {
+                    console.log(stderr)
+                    return res.json(stderr) }
+                console.log('run')
+                console.log(stdout)
                 return res.json(stdout)
-            });  
+            })
         }
     })
-});
+})
 
 router.post('/updateDB', (req, res) => {
     const username = req.body.username
@@ -146,7 +153,7 @@ router.post('/logout', (req, res) => {
     User.findOneAndUpdate({ username }, { status: false })
         .then(user => {
             if(user){
-                return res.json('Updated') 
+                return res.json('Updated')
             }
             return res.json('User not found') })
         .catch(err => { return res.json(err) })
