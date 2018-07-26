@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # Siwanont Sittinam
-# Face Main Command
+# Train & Create Control
 
 # Import necessary modules
 import optparse as optparse
@@ -8,8 +8,6 @@ import sys as sys
 
 from lib.create_dataset import CreateDataset
 from lib.train_dataset import Training
-from lib.utility import Utility
-util = Utility()
 
 def whenError(parser):
     parser.print_help()
@@ -21,7 +19,6 @@ def createDataset(source, name):
     print('[Initial] create dataset')
     # FD = FaceDetection()
     if source == "camera":
-        util.getIP()
         CreateDataset(name).run()
     elif source == "image":
         print('[Initial] detect faces with image')

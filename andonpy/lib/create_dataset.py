@@ -28,6 +28,7 @@ class CreateDataset():
         name = username
 
     def run(self):
+        util.getIP()
         app.run(host='0.0.0.0', port=5001, threaded=True)
 
 @app.route('/')
@@ -57,7 +58,7 @@ def createDataset():
         print("[Initial] Camera is active...")
         print("[Initial] Please look at the camera and wait a minute...")
 
-        camera.rotation = 180
+        # camera.rotation = 180
         camera.brightness = 55
         camera.contrast = 5
         stream = PiRGBArray(camera)

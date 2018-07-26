@@ -1,0 +1,25 @@
+#!/usr/bin/env python
+# Siwanont Sittinam
+# Recognition Control
+
+#!/usr/bin/env python
+# Siwanont Sittinam
+# Train & Create Control
+
+# Import necessary modules
+import optparse as optparse
+import sys as sys
+
+from lib.predict_dataset import PredictDataset
+
+def whenError(parser):
+    parser.print_help()
+    sys.exit(1)
+
+def main():
+    parse = optparse.OptionParser()
+    options, arguments = parse.parse_args()
+    PredictDataset().run()
+
+if __name__ == '__main__':
+    main()
