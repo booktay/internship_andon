@@ -12,11 +12,11 @@ const { exec } = require('child_process')
 //register new user
 router.post('/register', (req, res) => {
     const { errors, isValid } = validateRegisterInput(req.body)
-
+  
     if(!isValid) {
         return res.json(errors)
     }
-
+    
     axios.get('https://api.github.com/users/' + req.body.gitName).then(resp => {
         User.findOne({ username: req.body.username.toLowerCase() }).then(user => {
             if(user) {
@@ -32,9 +32,8 @@ router.post('/register', (req, res) => {
                             username: req.body.username.toLowerCase(),
                             password: req.body.password,
                             gitName: req.body.gitName.toLowerCase(),
-                            imgURL: req.body.imgURL
                         })
-
+            
                         bcrypt.genSalt(10, (err, salt) => {
                             bcrypt.hash(newUser.password, salt, (err,hash) => {
                                 if(err) throw err
@@ -46,11 +45,12 @@ router.post('/register', (req, res) => {
                         })
                     }
                 })
-            }}
+            }} 
         )})
         .catch(erraxios => {
-            if(erraxios.response.data.message.slice(0,23) === 'API rate limit exceeded')
-                return ('Github API rate limit exceeded')
+            if(erraxios.response.data.message.slice(0,23) === 'API rate limit exceeded'){
+                return res.json('Github API rate limit exceeded')
+            }
             errors.gitName = 'Github username not found'
             return res.json(errors)
         }
@@ -80,7 +80,7 @@ router.post('/login', (req, res) => {
                     if(!user) {
                         errors.username = 'The service is unavailable'
                         return res.json(errors)
-                    } else {
+                    } else { 
                         bcrypt.compare(password, user.password)
                         .then(isMatch => {
                             if(isMatch) {
@@ -89,7 +89,7 @@ router.post('/login', (req, res) => {
                                     res.json({
                                         payload,
                                         success: true,
-                                        token: 'Bearer ' + token
+                                        token: 'Bearer ' + token 
                                     })
                                 })
                             } else {
@@ -109,12 +109,8 @@ router.get('/openCam', (req, res) => {
         if(user) {
             return res.json('The service is unavailable')
         } else {
-            exec('python ../andonpy/andonpred', (err,stdout,stderr) => {
-                if (err) {
-                    console.log(stderr)
-                    return res.json(stderr) }
-                console.log('run')
-                console.log(stdout)
+            exec('andonpred', (err,stdout,stderr) => { 
+                if (err) { return res.json(stderr) }
                 return res.json(stdout)
             })
         }
@@ -124,20 +120,25 @@ router.get('/openCam', (req, res) => {
 router.post('/updateDB', (req, res) => {
     const username = req.body.username
     User.findOneAndUpdate({ username }, {status: true}).then(user => {
-        if(user)
+        if(user) {
+            exec('sudo PYTHONPATH=".:build/lib.linux-armv7l-2.7" python pythonScript/script.py -c -wel', (err,stdout,stderr) => { 
+                if (err) { return res.json(stderr) }
+               
+            })
             return res.json(user)
+        }
         else
             return res.json('Update database fail')
     })
 })
 
 router.post('/clearDB', (req, res) => {
-    User.findOne({ username: 'adminandon' }).then(user => {
+    User.findOne({ username: 'andonadmin' }).then(user => {
         if(user) {
             bcrypt.compare(req.body.password, user.password)
             .then(isMatch => {
                 if(isMatch) {
-                    User.update({ status: true }, { status: false })
+                    User.updateMany({ status: true }, { status: false })
                     .then(response => { return res.json('Database Reset') })
                     .catch(err => { return res.json(err) })
                 } else {
@@ -153,7 +154,7 @@ router.post('/logout', (req, res) => {
     User.findOneAndUpdate({ username }, { status: false })
         .then(user => {
             if(user){
-                return res.json('Updated')
+                return res.json('Updated') 
             }
             return res.json('User not found') })
         .catch(err => { return res.json(err) })

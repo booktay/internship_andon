@@ -6,7 +6,7 @@
 import optparse as optparse
 import sys as sys
 
-from lib.predict_dataset import PredictDataset
+from lib.predict_dataset import PredictonWeb, PredictonLine
 
 def whenError(parser):
     parser.print_help()
@@ -14,8 +14,12 @@ def whenError(parser):
 
 def main():
     parse = optparse.OptionParser()
+    parse.add_option('-s', '--show', default=False, action="store_true" , help="start web server to show camera", dest="show")
     options, arguments = parse.parse_args()
-    PredictDataset().run()
+    if options.show:
+        PredictonWeb().run()
+    else:
+        PredictonLine().run()
 
 if __name__ == '__main__':
     main()

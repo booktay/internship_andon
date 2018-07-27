@@ -30,7 +30,7 @@ face_cascade = cv.CascadeClassifier(util.HAARPath())
 name = "unknown"
 verif = "False"
 
-class PredictDataset():
+class PredictonWeb():
 
     def __init__(self):
         pass
@@ -124,3 +124,62 @@ def shutdown():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, threaded=True)
+
+
+class PredictonLine():
+
+    def __init__(self):
+        self.user_all = util.User()
+        self.train_path = util.TRAINPath()
+        global recognizer
+        self.recognizer = recognizer
+        # Initial face_cascade lib path
+        global face_cascade
+        self.face_cascade = face_cascade
+
+    def run(self):
+
+        self.recognizer.read(self.train_path[0])
+
+        with PiCamera(resolution=(1280, 720), framerate=90) as camera:
+            print("[Initial] Camera is active...")
+            print("[Initial] Please look at the camera and wait a minute...")
+
+            # camera.rotation = 180
+            camera.brightness = 60
+            camera.contrast = 5
+            stream = PiRGBArray(camera)
+
+            check_count = 0
+            check_name = "unknown"
+
+            for frame in camera.capture_continuous(stream, format="bgr", use_video_port=True):
+                image = frame.array
+                gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+
+                faces = self.face_cascade.detectMultiScale(gray, 1.3, 5)
+                name = "unknown"
+
+                for (x, y, w, h) in faces:
+                    cv.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
+                    id, confidence = self.recognizer.predict(gray[y:y+h, x:x+w])
+                    if (confidence < 50):
+                        name = self.user_all[id][1]
+                    cv.putText(image, name, (x+5, y + h + 5), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
+
+                cv.imwrite("img.jpg", image)
+
+                if not name is "unknown":
+                    if not check_name is name:
+                        check_name = name
+                        print("[Found] " + name)
+                        check_count = 0
+                    else:
+                        check_count += 1
+                        if check_count == 5:
+                            print("[Verify]")
+                            print(name)
+                            break
+
+                stream.truncate()
+                stream.seek(0)

@@ -17,7 +17,7 @@ class Login extends Component {
             profile: [],
             commit_data: [],
             git_status: true,
-            isLoggedIn: false
+            isLoggedIn: ''
         }
         this.onChange = this.onChange.bind(this)
         this.onSubmit = this.onSubmit.bind(this)
@@ -36,47 +36,52 @@ class Login extends Component {
 
     onSubmit(e) {
         e.preventDefault();
-        axios.post('/api/user/login',{
-            username: this.state.username,
-            password: this.state.password,
-        })
-        .then(
-            (res) => {
-                console.log('Login status',res.data.success)
-                if(res.data.username !== 'The service is unavailable'){
-                    this.setState({ isLoggedIn: true})
-                    this.props.update_status(false);
-                    sessionStorage.setItem('token', res.data.token);
-                    this.getCurrentRepo(res.data.payload.username,res.data.payload.gitName);
-                }
-            })
-               .then((res)=>{
-                if(this.state.isLoggedIn){
-                swal({
-                    title: "You are logged in",
-                    text: "Login successful",
-                    type: "success",
-                    showConfirmButton: false,
-                    timer: 3000
+        console.log();
+        var ip = require('ip');
+        console.log(ip.address());
+        swal({
+            title: 'Logging in',
+            text: 'Verifying...',
+            allowOutsideClick: false,
+            onOpen: ()=> {
+                swal.showLoading();
+                axios.post('/api/user/login',{
+                    username: this.state.username,
+                    password: this.state.password,
                 })
-            }
-                else if(!this.state.isLoggedIn) {
-                    swal({
-                        title: "The service is unavailable",
-                        text: "Please logout on previous user",
-                        type: "error",
-                        confirmButtonText: "Try again"
+                .then(
+                    (res) => {
+                        if(res.data.username !== 'The service is unavailable'){
+                            this.setState({ isLoggedIn: 'true'})
+                            this.props.update_status(false);
+                            sessionStorage.setItem('token', res.data.token);
+                            this.getCurrentRepo(res.data.payload.username,res.data.payload.gitName);
+                        }
+                       
+                        else {
+                            this.setState({ isLoggedIn: 'false'})
+                        }
+                    })
+                       .then((res)=>{
+                        if(this.state.isLoggedIn === 'false'){
+                            swal({
+                                title: "The service is unavailable",
+                                text: "Please logout on previous user",
+                                type: "error",
+                                confirmButtonText: "Try again"
+                            });
+                        }
+                    }).catch((res) => {
+                        swal({
+                            title: "Error",
+                            text: "Wrong username or password",
+                            type: "error",
+                            confirmButtonText: "Try again"
+                        });
                     });
-                }
-            
-            }).catch((res) => {
-                swal({
-                    title: "Error",
-                    text: "Wrong username or password",
-                    type: "error",
-                    confirmButtonText: "Try again"
-                });
-            });
+            }
+        })
+       
     }
 
     getCurrentRepo(username,gitName){
@@ -90,6 +95,14 @@ class Login extends Component {
                 Authorization: sessionStorage.token
             }
         }).then(res => {
+            if ( res.data !== 'Github API rate limit exceeded'){
+                swal({
+                    title: "You are logged in",
+                    text: "Login successful",
+                    type: "success",
+                    showConfirmButton: false,
+                    timer: 3000
+                })
             axios({
                 url: '/api/git/repoinfo',
                 method: 'post',
@@ -105,6 +118,15 @@ class Login extends Component {
                 this.props.cookie(username,gitName,res.data.image_url);
             }
             )
+        }
+        else {
+            sessionStorage.removeItem('token')
+            swal({
+                title: 'Github API rate limit exceeded',
+                text: 'Please try again',
+                type: 'error'
+            })
+        }
         });  
     }
 
@@ -135,32 +157,40 @@ class Login extends Component {
     }
 
     openCamera(){
-        axios.get('/api/user/openCam')
-        .then( res =>{
-            console.log('OpenCam:',res);
-            if(res.data==='The service is unavailable'){
-                swal({
-                    title: 'The service is unavailable',
-                    text: 'Please logout from previous user',
-                    type: 'error',
-                    showConfirmButton: false,
-                    timer: 3000
-                })
-            }
-            else {
-                swal({
-                    title: 'Camera connected!',
-                    text: 'Scan your face with Aquatan Lamp before logged in',
-                    type: 'success',
-                    showCancelButton: true,
-                    confirmButtonText: 'Scan your face',
-                })
-                .then((result) => {
-                    console.log(result);
-                    if (result.value) {
-                        window.open(' http://localhost:5001');
+        swal({
+            title: 'Connecting Camera',
+            text: 'Connecting...',
+            allowOutsideClick: false,
+            onOpen: ()=> {
+                swal.showLoading();
+                axios.get('/api/user/openCam')
+                .then((res) => {
+                    console.log('OpenCam:',res);
+                    if(res.data==='The service is unavailable'){
+                        swal({
+                            title: 'The service is unavailable',
+                            text: 'Please logout from previous user',
+                            type: 'error',
+                            showConfirmButton: false,
+                            timer: 3000
+                        })
                     }
-                  })
+                    else {
+                        swal({
+                            title: 'Camera connected!',
+                            text: 'Scan your face with Aquatan Lamp before logged in',
+                            type: 'success',
+                            showCancelButton: true,
+                            confirmButtonText: 'Scan your face',
+                        })
+                        .then((result) => {
+                            console.log(window.location.hostname);
+                            if (result.value) {
+                                window.open('http://'+window.location.hostname+':5001');
+                            }
+                          })
+                    }
+                })
             }
         })
     }
@@ -204,14 +234,13 @@ class Login extends Component {
                     confirmButtonText: 'Try Again'
                   })
             }
-            
           })
     }
-
     render() {
 
         const isAlreadyAuthenticated = this.isAuthenticated();
         if( isAlreadyAuthenticated && this.state.redirect_status ){
+            console.log(isAlreadyAuthenticated);
         return (
             <Redirect to={{ pathname: '/monitor'}}  /> 
             )
@@ -247,8 +276,5 @@ function mapDispatchToProps(dispatch){
        update_status: (status) => dispatch(addStatus(status))
     }
 }
-
-
-
 
 export default connect(null,mapDispatchToProps)(Login);

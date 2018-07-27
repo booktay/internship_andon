@@ -40,6 +40,9 @@
                         if (confirm("[Active] " + data)) {
                             document.location.href = $SCRIPT_ROOT + "/shutdown";
                         }
+                        else {
+                            document.location.reload();
+                        }
                     }
                 });
             }
