@@ -5,9 +5,10 @@
 from flask import Flask, render_template, request, Response, redirect, url_for
 import logging as logging
 
-import sys
-import os
+import sys as sys
+import os as os
 import cv2 as cv
+import time as time
 from picamera import PiCamera
 from picamera.array import PiRGBArray
 from .utility import Utility
@@ -121,16 +122,12 @@ def shutdown():
     shutdown_server()
     return '[No service] Server is closed'
 
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001, threaded=True)
-
-
 class PredictonLine():
 
     def __init__(self):
         self.user_all = util.User()
         self.train_path = util.TRAINPath()
+        self.img_path = util.IMGNodePath()
         global recognizer
         self.recognizer = recognizer
         # Initial face_cascade lib path
@@ -141,9 +138,12 @@ class PredictonLine():
 
         self.recognizer.read(self.train_path[0])
 
+        time.sleep(1)
+        start_time = int(time.time())
+
         with PiCamera(resolution=(1280, 720), framerate=90) as camera:
             print("[Initial] Camera is active...")
-            print("[Initial] Please look at the camera and wait a minute...")
+            print("[Initial] Please look at the camera")
 
             # camera.rotation = 180
             camera.brightness = 60
@@ -167,7 +167,13 @@ class PredictonLine():
                         name = self.user_all[id][1]
                     cv.putText(image, name, (x+5, y + h + 5), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
 
-                cv.imwrite("img.jpg", image)
+                path_img = os.path.join(self.img_path, "img.jpg")
+                cv.imwrite(path_img, image)
+
+                delta_time = int(time.time())-start_time
+                if delta_time == 10 * 60 * 60:
+                    print("[Close] Timeout")
+                    break
 
                 if not name is "unknown":
                     if not check_name is name:

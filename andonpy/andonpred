@@ -13,13 +13,16 @@ def whenError(parser):
     sys.exit(1)
 
 def main():
-    parse = optparse.OptionParser()
+    parse = optparse.OptionParser("Usage: %prog run [options]")
     parse.add_option('-s', '--show', default=False, action="store_true" , help="start web server to show camera", dest="show")
     options, arguments = parse.parse_args()
-    if options.show:
-        PredictonWeb().run()
+    if arguments and arguments[0].lower() == "run":
+        if options.show:
+            PredictonWeb().run()
+        else:
+            PredictonLine().run()
     else:
-        PredictonLine().run()
+        whenError(parse)
 
 if __name__ == '__main__':
     main()

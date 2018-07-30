@@ -31,6 +31,11 @@ class Utility:
     def IMGROOTPath(self):
         return IMG_STD_PATH
 
+    def IMGNodePath(self):
+        ANDON_NODE = os.path.join(ROOT_PATH, "andonnode")
+        IMG_PATH = "/client/src/facedetect"
+        return os.path.join(ANDON_NODE, IMG_PATH)
+
     def TRAINPath(self):
         return [TRAIN_LBPH_YML, TRAIN_EIGE_YML, TRAIN_FICH_YML]
 
