@@ -167,11 +167,11 @@ class PredictonLine():
                         name = self.user_all[id][1]
                     cv.putText(image, name, (x+5, y + h + 5), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
 
-                path_img = os.path.join(self.img_path, "img.jpg")
-                cv.imwrite(path_img, image)
+                # path_img = os.path.join(self.img_path, "img.jpg")
+                cv.imwrite("img.jpg", image)
 
                 delta_time = int(time.time())-start_time
-                if delta_time == 10 * 60 * 60:
+                if delta_time == 5 * 60:
                     print("[Close] Timeout")
                     break
 
@@ -183,8 +183,7 @@ class PredictonLine():
                     else:
                         check_count += 1
                         if check_count == 5:
-                            print("[Verify]")
-                            print(name)
+                            print("[Verify] " + name)
                             break
 
                 stream.truncate()

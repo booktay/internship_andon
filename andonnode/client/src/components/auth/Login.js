@@ -17,7 +17,8 @@ class Login extends Component {
             profile: [],
             commit_data: [],
             git_status: true,
-            isLoggedIn: ''
+            isLoggedIn: '',
+            user_detect: ''
         }
         this.onChange = this.onChange.bind(this)
         this.onSubmit = this.onSubmit.bind(this)
@@ -36,9 +37,6 @@ class Login extends Component {
 
     onSubmit(e) {
         e.preventDefault();
-        console.log();
-        var ip = require('ip');
-        console.log(ip.address());
         swal({
             title: 'Logging in',
             text: 'Verifying...',
@@ -81,7 +79,6 @@ class Login extends Component {
                     });
             }
         })
-       
     }
 
     getCurrentRepo(username,gitName){
@@ -143,7 +140,6 @@ class Login extends Component {
                     }
                 })
                 .then(res => {
-                    console.log('freq array',res.data);
                     if(res.data === 'Information Not found' || res.data === 'Github API rate limit exceeded'){
                         this.setState({ redirect_status: false})
                     }
@@ -166,7 +162,7 @@ class Login extends Component {
                 swal.showLoading();
                 axios.get('/api/user/openCam')
                 .then((res) => {
-                    console.log('OpenCam:',res);
+                    var usertemp =''
                     if(res.data==='The service is unavailable'){
                         swal({
                             title: 'The service is unavailable',
@@ -177,41 +173,52 @@ class Login extends Component {
                             allowOutsideClick: true
                         })
                     }
-                    else {
+                    else if ( res.data ==='User not found'){
                         swal({
-                            title: 'Camera connected!',
-                            text: 'Scan your face with Aquatan Lamp before logged in',
-                            type: 'success',
-                            showCancelButton: true,
-                            confirmButtonText: 'Scan your face',
-                            allowOutsideClick: true
+                            title: 'Not found'
                         })
+                    }
+                    else {
+                        usertemp = res.data.payload.username;
+                        sessionStorage.setItem('camToken', res.data.token);
+                        swal({
+                            title: 'Camera detected!',
+                            text: 'Hello '+usertemp + '!',
+                            type: 'info',
+                            imageUrl: 'https://unsplash.it/400/200',
+                            imageWidth: 400,
+                            imageHeight: 200,
+                            imageAlt: 'Custom image',
+                            showCancelButton: true,
+                            confirmButtonText: 'Yes, this is me!',
+                            cancelButtonText: 'No, detect again!',
+                            allowOutsideClick: true
+                        }
+                    )
+                        
                         .then((result) => {
                             if ( result.value){
-                                swal({
-                                    title: 'Face detected!',
-                                    imageUrl: require('../../facedetect/img.jpg'),
-                                    imageWidth: 600,
-                                    imageHeight: 500,
-                                    imageAlt: 'Custom image',
-                                    animation: true,
-                                    confirmButtonText: 'Yes, this is me!',
-                                    showCancelButton: true,
-                                    cancelButtonText: 'No, detect again!',
-                                    allowOutsideClick: true
-                                  })
-                                  .then((result) => {
-                                    if (result.value) {
-                                      swal(
-                                        'Connected!',
-                                        'Please login with your username and password',
-                                        'success'
-                                      )
+                                axios({
+                                    url: '/api/user/updateDB',
+                                    method: 'post',
+                                    data: {
+                                        username: usertemp
+                                    },
+                                    headers: {
+                                        Authorization: sessionStorage.camToken
                                     }
-                                    else if (result.dismiss === swal.DismissReason.cancel){
-                                        this.openCamera();
-                                    }
-                                  })
+                                }).then(()=>{
+                                swal(
+                                    'Connected!',
+                                    'Please login with your username and password',
+                                    'success'
+                                  )
+                                  sessionStorage.removeItem('camToken')
+                                })
+                            }
+                            else if (result.dismiss === swal.DismissReason.cancel){
+                                sessionStorage.removeItem('camToken')
+                                this.openCamera();
                             }
                           })
                     }
@@ -233,7 +240,6 @@ class Login extends Component {
           ]).then((result) => {
               if( result.value !== "" && result.dismiss !== 'overlay'){
               axios.post('/api/user/clearDB',{ password: result.value[0]}).then( res => {
-                  console.log('database')
                   if(res.data !== 'Password incorrect'){
                     swal({
                         title: 'All done!',
@@ -274,6 +280,8 @@ class Login extends Component {
         else {
             return (
                 <div className="parallax">
+                                {/* <img src={require('../auth/img.jpg')}></img> */}
+
                     <div className="typewriter">
                         <h1 id="header-text">ANDON MONITOR</h1>
                     </div>
